@@ -2,69 +2,113 @@
 
 require 'Rates.php';
 
-// $grossIncomeCalc = calculateIncomeFromTier1(40000);
 
-echo("::: Welcome to the Gross Monthly pay calculator. Please enter all the required values ::: \r\n");
+echo("=================================================================================================== \r\n");
+echo("    ::: Welcome to the Gross Monthly pay calculator. Please enter all the required values ::: \r\n");
 echo("=================================================================================================== \r\n");
 $paye = readline("Enter your PAYE : \r\n");
 $relief = readline("Enter your total Reliefs : \r\n");
 $allowances = readline("Enter your total Allowances : \r\n");
 
+    // Check to see if relief is empty or null and set it to zero as relief can be zero
     if(empty($relief) || is_null($relief))
     {
         $relief = 0;
     }
+
+    // Check to confirm that all required inputs are present are numeric
     if(!(is_numeric($paye) && is_numeric($relief) && is_numeric($allowances)))
     {
         echo("\r\n");
         echo("\r\n");
-        echo("::: Task Breaked - An error occured ::: \r\n");
+        echo("=================================================================================================== \r\n");
+        echo("          ::: Task Breaked - An error occured ::: \r\n");
         echo("=================================================================================================== \r\n");
 
+        // Break the program incase one or more of the required fields is(are) not numeric
         exit("All the values must be integers! Please restart the program. \r\n");
     }
-
+    // Calculate the gross tax value that is displayed at the end of calculation
+    $grossTaxFinal = $paye + $relief;
+    // Calculate the gross tax that will be used by the various defined functions to compute Gross Income
     $grossTax = $paye + $relief;
 
-    if($grossTax < TIER1)
+    // Calculate the amount that is taxable for every tier
+    $taxed1 = TIER1 * 0.1;
+    $taxed2 = TIER2 * 0.15;
+    $taxed3 = TIER3 * 0.2;
+    $taxed4 = TIER4 * 0.25;
+    $taxed5 = TIER4 * 0.3;
+    $grossIncomeCalc = 0;
+
+    // Check if value of gross tax is smaller than taxed in Tier1
+    if($grossTax <= $taxed1)
     {
-        $grossIncomeCalc = calculateIncomeFromTier1($grossTax);
-    }
-    else
-    {
-        if($grossTax < TIER2)
-        {
-            $one = calculateIncomeFromTier1($grossTax);
-            $two = calculateIncomeFromTier2($grossTax);
-
-            $grossIncomeCalc = $one + $two;
-        }
-
-        if($grossTax < TIER3)
-        {
-            $one = calculateIncomeFromTier1($grossTax);
-            $two = calculateIncomeFromTier2($grossTax);
-            $three = calculateIncomeFromTier3($grossTax);
-            
-            $grossIncomeCalc = $one + $two + $three;
-        }
-
-        if($grossTax > TIER3)
-        {
-            $one = calculateIncomeFromTier1($grossTax);
-            $two = calculateIncomeFromTier2($grossTax);
-            $three = calculateIncomeFromTier3($grossTax);
-            $four = calculateIncomeFromTier4($grossTax);
-            
-            $grossIncomeCalc = $one + $two + $three + $four;
-        }
+        $grossIncomeCalc += $grossTax * 10;
     }
 
-    $finalGrossIncome = $grossIncomeCalc + $allowances;
+    // Check if value of gross tax is bigger than taxed in Tier1
+    else if($grossTax > $taxed1)
+    {
+        // Call the method for Tier 1 calculation
+        $grossIncomeCalc += calculateIncomeFromTier1();
+        //Reduce the taxable income for next step
+        $grossTax -= $taxed1;
 
-echo("\r\n");
-echo("\r\n");
-echo("::: Task Completed ::: \r\n");
-echo("======================================================================================= \r\n");
-echo("Your gross tax is : Ksh." . $grossTax . "\r\n");
-echo("Your gross income is : Ksh." . $finalGrossIncome . "\r\n");
+        if($grossTax <= $taxed2)
+        {
+            $grossIncomeCalc += $grossTax * 6.67;
+        }
+        else if ($grossTax > $taxed2)
+        {
+            // Call the method for Tier 2 calculation
+            $grossIncomeCalc += calculateIncomeFromTier2();
+            //Reduce the taxable income for next step
+            $grossTax -= $taxed2;
+
+            if($grossTax <= $taxed3)
+            {
+                $grossIncomeCalc += $grossTax * 5;
+            }
+            else if($grossTax > $taxed3)
+            {
+                // Call the method for Tier 3 calculation
+                $grossIncomeCalc += calculateIncomeFromTier3();
+                //Reduce the taxable income for next step
+                $grossTax -= $taxed3;
+
+                if($grossTax <= $taxed4)
+                {
+                    $grossIncomeCalc += $grossTax * 4;
+                }
+                else if($grossTax > $taxed4)
+                {
+                    // Call the method for Tier 4 calculation
+                    $grossIncomeCalc += calculateIncomeFromTier4();
+                    //Reduce the taxable income for next step
+                    $grossTax -= $taxed4;
+
+                    if($grossTax <= $taxed5)
+                    {
+                        $grossIncomeCalc += $grossTax * 3.33;
+                    }
+                    else if($grossTax > $taxed5)
+                    {
+                        $grossIncomeCalc += $grossTax * 3.33;
+                    }
+                }
+            }
+        }
+    }
+    
+    //Calculate the basic salary given the gross salary and allowances
+    $basicSalary = $grossIncomeCalc - $allowances;
+
+    echo("\r\n");
+    echo("\r\n");
+    echo("=================================================================================================== \r\n");
+    echo("          ::: Task Completed ::: \r\n");
+    echo("=================================================================================================== \r\n");
+    echo("Your gross tax is : Ksh." . $grossTaxFinal . "\r\n");
+    echo("Your basic salary is : Ksh." . $basicSalary . "\r\n");
+    echo("Your gross income is : Ksh." . $grossIncomeCalc . "\r\n");
