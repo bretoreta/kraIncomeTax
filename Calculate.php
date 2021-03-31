@@ -35,16 +35,13 @@ $allowances = readline("Enter your total Allowances : \r\n");
 
     // Calculate the amount that is taxable for every tier
     $taxed1 = TIER1 * 0.1;
-    $taxed2 = TIER2 * 0.15;
-    $taxed3 = TIER3 * 0.2;
-    $taxed4 = TIER4 * 0.25;
-    $taxed5 = TIER4 * 0.3;
+    $taxed2 = TIER2 * 0.25;
     $grossIncomeCalc = 0;
 
     // Check if value of gross tax is smaller than taxed in Tier1
     if($grossTax <= $taxed1)
     {
-        $grossIncomeCalc += $grossTax * 10;
+        $grossIncomeCalc += $grossTax / 0.1;
     }
 
     // Check if value of gross tax is bigger than taxed in Tier1
@@ -57,7 +54,7 @@ $allowances = readline("Enter your total Allowances : \r\n");
 
         if($grossTax <= $taxed2)
         {
-            $grossIncomeCalc += $grossTax * 6.67;
+            $grossIncomeCalc += $grossTax / 0.25;
         }
         else if ($grossTax > $taxed2)
         {
@@ -66,37 +63,9 @@ $allowances = readline("Enter your total Allowances : \r\n");
             //Reduce the taxable income for next step
             $grossTax -= $taxed2;
 
-            if($grossTax <= $taxed3)
+            if($grossTax > $taxed2)
             {
-                $grossIncomeCalc += $grossTax * 5;
-            }
-            else if($grossTax > $taxed3)
-            {
-                // Call the method for Tier 3 calculation
-                $grossIncomeCalc += calculateIncomeFromTier3();
-                //Reduce the taxable income for next step
-                $grossTax -= $taxed3;
-
-                if($grossTax <= $taxed4)
-                {
-                    $grossIncomeCalc += $grossTax * 4;
-                }
-                else if($grossTax > $taxed4)
-                {
-                    // Call the method for Tier 4 calculation
-                    $grossIncomeCalc += calculateIncomeFromTier4();
-                    //Reduce the taxable income for next step
-                    $grossTax -= $taxed4;
-
-                    if($grossTax <= $taxed5)
-                    {
-                        $grossIncomeCalc += $grossTax * 3.33;
-                    }
-                    else if($grossTax > $taxed5)
-                    {
-                        $grossIncomeCalc += $grossTax * 3.33;
-                    }
-                }
+                $grossIncomeCalc += $grossTax / 0.30;
             }
         }
     }
