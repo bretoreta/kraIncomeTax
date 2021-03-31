@@ -14,16 +14,16 @@ Alowances of a given employee. The logic behind it is pretty simple and straight
 the application on your local machine to the following:
 
 - Clone the repository to your locat machine using: 
-    git clone "url"
+> git clone "url"
 
 - Install the project dependencies using composer:
-    composer install
+> composer install
 
 - Install npm packages using node:
-    npm install
+> npm install
 
 - Run the application using artisan:
-    php artisan serve
+> php artisan serve
 
 The application will run on http://127.0.0.1:8000/ click on the link or open it on your browser to open and use the application.
 
